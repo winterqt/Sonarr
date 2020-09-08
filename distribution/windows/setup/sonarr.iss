@@ -75,7 +75,8 @@ function PrepareToInstall(var NeedsRestart: Boolean): String;
 var
   ResultCode: Integer;
 begin
-  Exec(ExpandConstant('{commonappdata}\NzbDrone\bin\NzbDrone.Console.exe'), '/u', '', 0, ewWaitUntilTerminated, ResultCode)
+  Exec('sc', 'stop nzbdrone', '', 0, ewWaitUntilTerminated, ResultCode)
+  Exec('sc', 'delete nzbdrone', '', 0, ewWaitUntilTerminated, ResultCode)
 end;
 
 function Framework472IsNotInstalled(): Boolean;
