@@ -23,7 +23,7 @@ module.exports = (env) => {
 
   const config = {
     mode: isProduction ? 'production' : 'development',
-    devtool: 'source-map',
+    devtool: isProduction ? 'source-map' : 'eval-source-map',
 
     stats: {
       children: false
@@ -79,46 +79,34 @@ module.exports = (env) => {
       }),
 
       new HtmlWebpackPlugin({
-        template: 'frontend/src/index.html',
+        template: 'frontend/src/index.ejs',
         filename: 'index.html',
         publicPath: '/'
       }),
 
       new CopyPlugin({
         patterns: [
-          // HTML
+          // HTML (this causes a big memory leak)
           {
             from: 'frontend/src/*.html',
             to: path.join(distFolder, '[name][ext]'),
-            globOptions: {
-              ignore: ['**/index.html']
+            transform: {
+              cache: true
+            },
+            info: { minimized: true }
+          },
+
+          // Content
+          {
+            from: '**/*.*',
+            to: path.join(distFolder, 'Content', '[path][name][ext]'),
+            context: 'frontend/src/Content/',
+            transform: {
+              cache: true
             }
-          },
-
-          // Fonts
-          {
-            from: 'frontend/src/Content/Fonts/*.*',
-            to: path.join(distFolder, 'Content/Fonts', '[name][ext]')
-          },
-
-          // Icon Images
-          {
-            from: 'frontend/src/Content/Images/Icons/*.*',
-            to: path.join(distFolder, 'Content/Images/Icons', '[name][ext]')
-          },
-
-          // Images
-          {
-            from: 'frontend/src/Content/Images/*.*',
-            to: path.join(distFolder, 'Content/Images', '[name][ext]')
-          },
-
-          // Robots
-          {
-            from: 'frontend/src/Content/robots.txt',
-            to: path.join(distFolder, 'Content', '[name][ext]')
           }
-        ]
+        ],
+        options: { concurrency: 50 }
       }),
 
       new LiveReloadPlugin()
