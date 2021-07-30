@@ -50,7 +50,7 @@ namespace NzbDrone.Core.Test.ValidationTests
         [Test]
         public void should_not_be_valid_if_set_to_bin_folder()
         {
-            MonoOnly();
+            PosixOnly();
 
             var series = Builder<Series>.CreateNew()
                                         .With(s => s.Path = "/bin")
@@ -62,7 +62,7 @@ namespace NzbDrone.Core.Test.ValidationTests
         [Test]
         public void should_not_be_valid_if_child_of_bin_folder()
         {
-            MonoOnly();
+            PosixOnly();
 
             var series = Builder<Series>.CreateNew()
                                         .With(s => s.Path = "/bin/test")
