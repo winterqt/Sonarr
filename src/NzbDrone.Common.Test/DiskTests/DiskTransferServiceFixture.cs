@@ -750,7 +750,9 @@ namespace NzbDrone.Common.Test.DiskTests
         {
             var dir = Path.GetDirectoryName(path);
             if (exists && dir.IsNotNullOrWhiteSpace())
+            {
                 WithExistingFolder(dir);
+            }
 
             Mocker.GetMock<IDiskProvider>()
                 .Setup(v => v.FolderExists(path))
@@ -761,7 +763,9 @@ namespace NzbDrone.Common.Test.DiskTests
         {
             var dir = Path.GetDirectoryName(path);
             if (exists && dir.IsNotNullOrWhiteSpace())
+            {
                 WithExistingFolder(dir);
+            }
 
             Mocker.GetMock<IDiskProvider>()
                 .Setup(v => v.FileExists(path))
@@ -815,7 +819,6 @@ namespace NzbDrone.Common.Test.DiskTests
                     WithExistingFile(v, false);
                 });
 
-
             Mocker.GetMock<IDiskProvider>()
                 .Setup(v => v.FolderExists(It.IsAny<string>()))
                 .Returns(false);
@@ -833,6 +836,7 @@ namespace NzbDrone.Common.Test.DiskTests
                {
                    WithExistingFolder(s, false);
                    WithExistingFolder(d);
+
                    // Note: Should also deal with the files.
                });
 
@@ -841,6 +845,7 @@ namespace NzbDrone.Common.Test.DiskTests
                .Callback<string, bool>((f, r) =>
                {
                    WithExistingFolder(f, false);
+
                    // Note: Should also deal with the files.
                });
 
@@ -906,8 +911,13 @@ namespace NzbDrone.Common.Test.DiskTests
 
             Mocker.GetMock<IDiskProvider>()
                 .Setup(v => v.MoveFile(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
-                .Callback<string, string, bool>((s,d,o) => {
-                    if (File.Exists(d) && o) File.Delete(d);
+                .Callback<string, string, bool>((s, d, o) =>
+                {
+                    if (File.Exists(d) && o)
+                    {
+                        File.Delete(d);
+                    }
+
                     File.Move(s, d);
                 });
 

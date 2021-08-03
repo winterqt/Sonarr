@@ -27,7 +27,10 @@ namespace Sonarr.Api.V3.Blacklist
     {
         public static BlacklistResource MapToResource(this NzbDrone.Core.Blacklisting.Blacklist model)
         {
-            if (model == null) return null;
+            if (model == null)
+            {
+                return null;
+            }
 
             return new BlacklistResource
             {

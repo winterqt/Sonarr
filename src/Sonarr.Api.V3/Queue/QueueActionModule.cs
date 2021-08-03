@@ -150,7 +150,7 @@ namespace Sonarr.Api.V3.Queue
             {
                 _failedDownloadService.MarkAsFailed(trackedDownload.DownloadItem.DownloadId);
             }
-            
+
             if (!removeFromClient && !blacklist)
             {
                 if (!_ignoredDownloadService.IgnoreDownload(trackedDownload))

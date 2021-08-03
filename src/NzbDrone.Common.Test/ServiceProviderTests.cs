@@ -32,7 +32,6 @@ namespace NzbDrone.Common.Test
             }
         }
 
-
         private void CleanupService()
         {
             if (Subject.ServiceExist(TEMP_SERVICE_NAME))
@@ -57,7 +56,6 @@ namespace NzbDrone.Common.Test
         {
             Subject.ServiceExist("random_service_name").Should().BeFalse();
         }
-
 
         [Test]
         public void Service_should_be_installed_and_then_uninstalled()
@@ -118,7 +116,6 @@ namespace NzbDrone.Common.Test
             Subject.Start(ALWAYS_INSTALLED_SERVICE);
             Assert.Throws<InvalidOperationException>(() => Subject.Start(ALWAYS_INSTALLED_SERVICE));
 
-
             ExceptionVerification.ExpectedWarns(1);
         }
 
@@ -128,15 +125,14 @@ namespace NzbDrone.Common.Test
             Subject.GetService(ALWAYS_INSTALLED_SERVICE).Status
                 .Should().NotBe(ServiceControllerStatus.Running);
 
-
             Subject.Stop(ALWAYS_INSTALLED_SERVICE);
-
 
             Subject.GetService(ALWAYS_INSTALLED_SERVICE).Status
                 .Should().Be(ServiceControllerStatus.Stopped);
 
             ExceptionVerification.ExpectedWarns(1);
         }
+
         private static bool IsAnAdministrator()
         {
             var principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());

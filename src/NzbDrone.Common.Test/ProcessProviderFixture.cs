@@ -16,7 +16,6 @@ namespace NzbDrone.Common.Test
     [TestFixture]
     public class ProcessProviderFixture : TestBase<ProcessProvider>
     {
-
         [SetUp]
         public void Setup()
         {
@@ -42,7 +41,6 @@ namespace NzbDrone.Common.Test
                 {
                     TestLogger.Warn(ex, "{0} when killing process", ex.Message);
                 }
-                
             });
         }
 
@@ -128,7 +126,6 @@ namespace NzbDrone.Common.Test
                 Assert.Inconclusive("No Python available");
             }
         }
-
 
         [Test]
         public void kill_all_should_kill_all_process_with_name()
