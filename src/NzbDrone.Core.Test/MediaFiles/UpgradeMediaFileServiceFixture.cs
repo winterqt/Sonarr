@@ -2,7 +2,6 @@ using System.IO;
 using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
-using Marr.Data;
 using Moq;
 using NUnit.Framework;
 using NzbDrone.Common.Disk;
@@ -51,12 +50,11 @@ namespace NzbDrone.Core.Test.MediaFiles
             _localEpisode.Episodes = Builder<Episode>.CreateListOfSize(1)
                                                      .All()
                                                      .With(e => e.EpisodeFileId = 1)
-                                                     .With(e => e.EpisodeFile = new LazyLoaded<EpisodeFile>(
-                                                                                new EpisodeFile
+                                                     .With(e => e.EpisodeFile = new EpisodeFile
                                                                                 {
                                                                                     Id = 1,
                                                                                     RelativePath = @"Season 01\30.rock.s01e01.avi",
-                                                                                }))
+                                                                                })
                                                      .Build()
                                                      .ToList();
         }
@@ -66,12 +64,11 @@ namespace NzbDrone.Core.Test.MediaFiles
             _localEpisode.Episodes = Builder<Episode>.CreateListOfSize(2)
                                                      .All()
                                                      .With(e => e.EpisodeFileId = 1)
-                                                     .With(e => e.EpisodeFile = new LazyLoaded<EpisodeFile>(
-                                                                                new EpisodeFile
+                                                     .With(e => e.EpisodeFile = new EpisodeFile
                                                                                 {
                                                                                     Id = 1,
                                                                                     RelativePath = @"Season 01\30.rock.s01e01.avi",
-                                                                                }))
+                                                                                })
                                                      .Build()
                                                      .ToList();
         }
@@ -80,19 +77,17 @@ namespace NzbDrone.Core.Test.MediaFiles
         {
             _localEpisode.Episodes = Builder<Episode>.CreateListOfSize(2)
                                                      .TheFirst(1)
-                                                     .With(e => e.EpisodeFile = new LazyLoaded<EpisodeFile>(
-                                                                                new EpisodeFile
+                                                     .With(e => e.EpisodeFile = new EpisodeFile
                                                                                 {
                                                                                     Id = 1,
                                                                                     RelativePath = @"Season 01\30.rock.s01e01.avi",
-                                                                                }))
+                                                                                })
                                                      .TheNext(1)
-                                                     .With(e => e.EpisodeFile = new LazyLoaded<EpisodeFile>(
-                                                                                new EpisodeFile
+                                                     .With(e => e.EpisodeFile = new EpisodeFile
                                                                                 {
                                                                                     Id = 2,
                                                                                     RelativePath = @"Season 01\30.rock.s01e02.avi",
-                                                                                }))
+                                                                                })
                                                      .Build()
                                                      .ToList();
         }
@@ -148,7 +143,7 @@ namespace NzbDrone.Core.Test.MediaFiles
 
             Subject.UpgradeEpisodeFile(_episodeFile, _localEpisode);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Delete(_localEpisode.Episodes.Single().EpisodeFile.Value, DeleteMediaFileReason.Upgrade), Times.Once());
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Delete(_localEpisode.Episodes.Single().EpisodeFile, DeleteMediaFileReason.Upgrade), Times.Once());
         }
 
         [Test]
@@ -192,7 +187,7 @@ namespace NzbDrone.Core.Test.MediaFiles
 
             Assert.Throws<RootFolderNotFoundException>(() => Subject.UpgradeEpisodeFile(_episodeFile, _localEpisode));
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Delete(_localEpisode.Episodes.Single().EpisodeFile.Value, DeleteMediaFileReason.Upgrade), Times.Never());
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Delete(_localEpisode.Episodes.Single().EpisodeFile, DeleteMediaFileReason.Upgrade), Times.Never());
         }
 
         [Test]
@@ -201,13 +196,13 @@ namespace NzbDrone.Core.Test.MediaFiles
             _localEpisode.Episodes = Builder<Episode>.CreateListOfSize(1)
                                                      .All()
                                                      .With(e => e.EpisodeFileId = 1)
-                                                     .With(e => e.EpisodeFile = new LazyLoaded<EpisodeFile>(null))
+                                                     .With(e => e.EpisodeFile = null)
                                                      .Build()
                                                      .ToList();
 
             Subject.UpgradeEpisodeFile(_episodeFile, _localEpisode);
 
-            Mocker.GetMock<IMediaFileService>().Verify(v => v.Delete(_localEpisode.Episodes.Single().EpisodeFile.Value, It.IsAny<DeleteMediaFileReason>()), Times.Never());
+            Mocker.GetMock<IMediaFileService>().Verify(v => v.Delete(_localEpisode.Episodes.Single().EpisodeFile, It.IsAny<DeleteMediaFileReason>()), Times.Never());
         }
     }
 }

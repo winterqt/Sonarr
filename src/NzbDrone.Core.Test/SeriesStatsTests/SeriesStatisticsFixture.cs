@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
+using NzbDrone.Core.Languages;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.Qualities;
 using NzbDrone.Core.SeriesStats;
@@ -37,6 +38,7 @@ namespace NzbDrone.Core.Test.SeriesStatsTests
             _episodeFile = Builder<EpisodeFile>.CreateNew()
                                            .With(e => e.SeriesId = _series.Id)
                                            .With(e => e.Quality = new QualityModel(Quality.HDTV720p))
+                                           .With(e => e.Language = Language.English)
                                            .BuildNew();
         }
 

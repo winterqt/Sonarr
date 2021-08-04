@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Marr.Data.QGen;
+using System.Collections.Generic;
 using NzbDrone.Core.Datastore;
 using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Tv;
@@ -22,26 +21,24 @@ namespace NzbDrone.Core.Blacklisting
 
         public List<Blacklist> BlacklistedByTitle(int seriesId, string sourceTitle)
         {
-            return Query.Where(e => e.SeriesId == seriesId)
-                        .AndWhere(e => e.SourceTitle.Contains(sourceTitle));
+            return Query(e => e.SeriesId == seriesId && e.SourceTitle.Contains(sourceTitle));
         }
 
         public List<Blacklist> BlacklistedByTorrentInfoHash(int seriesId, string torrentInfoHash)
         {
-            return Query.Where(e => e.SeriesId == seriesId)
-                        .AndWhere(e => e.TorrentInfoHash.Contains(torrentInfoHash));
+            return Query(e => e.SeriesId == seriesId && e.TorrentInfoHash.Contains(torrentInfoHash));
         }
 
         public List<Blacklist> BlacklistedBySeries(int seriesId)
         {
-            return Query.Where(b => b.SeriesId == seriesId);
+            return Query(b => b.SeriesId == seriesId);
         }
 
-        protected override SortBuilder<Blacklist> GetPagedQuery(QueryBuilder<Blacklist> query, PagingSpec<Blacklist> pagingSpec)
-        {
-            var baseQuery = query.Join<Blacklist, Series>(JoinType.Inner, h => h.Series, (h, s) => h.SeriesId == s.Id);
-
-            return base.GetPagedQuery(baseQuery, pagingSpec);
-        }
+        protected override SqlBuilder PagedBuilder() => new SqlBuilder().Join<Blacklist, Series>((b, m) => b.SeriesId == m.Id);
+        protected override IEnumerable<Blacklist> PagedQuery(SqlBuilder sql) => _database.QueryJoined<Blacklist, Series>(sql, (bl, movie) =>
+                    {
+                        bl.Series = movie;
+                        return bl;
+                    });
     }
 }
